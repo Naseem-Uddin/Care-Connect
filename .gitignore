@@ -149,6 +149,7 @@ venv.bak/
 # Spyder project settings
 .spyderproject
 .spyproject
+.cursor/
 
 # Rope project settings
 .ropeproject

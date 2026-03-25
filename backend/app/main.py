@@ -2,6 +2,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings as config
+from app.api.v1.router import api_router
 
 app = FastAPI(title=config.PROJECT_NAME)
 
@@ -15,9 +16,4 @@ if config.CORS_ORIGINS:
         allow_headers=["*"],
     )
 
-@app.get("/")
-async def root():
-    return {"status": "online", "message": f"Welcome to {config.PROJECT_NAME} API"}
-
-# We will eventually include routers here:
-# app.include_router(api_router, prefix=settings.API_V1_STR)
+app.include_router(api_router, prefix=config.API_V1_STR)

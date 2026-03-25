@@ -1,35 +1,54 @@
-import React from 'react';
-import { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-
 import Register from './pages/register';
-// Simple components for demonstration
-const Home = () => <h2>Home Page</h2>;
-//const About = () => <h2>About Page</h2>;
+//import Login from './pages/login';
+
+const Home = () => (
+  <div className="simple-page">
+    <h2>Home Page</h2>
+  </div>
+);
 
 function App() {
+  const [message, setMessage] = useState('Connecting to backend...');
+
+  useEffect(() => {
+    fetch('/api/v1/auth/login-test')
+      .then((res) => {
+        if (!res.ok) throw new Error('Backend reachable but returned an error');
+        return res.json();
+      })
+      .then((data) => setMessage(data.message))
+      .catch((err) => {
+        console.error(err);
+        setMessage('Backend not reachable. Check if Uvicorn is running!');
+      });
+  }, []);
+
   return (
     <BrowserRouter>
-      <nav>
-        {/* Use Link instead of <a href="..."> */}
-        <Link to="/">Home</Link> | <Link to="/about">About</Link>
-      </nav>
+      <div className="app-layout">
+        <header className="site-header">
+          <span className="site-brand">Care Connect</span>
+          <nav className="site-nav" aria-label="Primary">
+            <Link to="/">Home</Link>
+            <Link to="/login">Login</Link>
+          </nav>
+        </header>
 
-      <Routes>
-        <Route path="/" element={< Register/>} />
-        <Route path="/login" element={<Home />} />
+        <div className="backend-status" role="status">
+          <strong>Backend:</strong> {message}
+        </div>
 
-      </Routes>
+        <main className="app-main">
+          <Routes>
+            <Route path="/" element={<Register />} />
+            <Route path="/login" element={<Home />} />
+          </Routes>
+        </main>
+      </div>
     </BrowserRouter>
   );
 }
-
-// frontend/src/App.tsx
-useEffect(() => {
-  // Vite sees '/api' and automatically forwards it to 'http://localhost:8000'
-  fetch('/api/v1/login') 
-    .then(res => res.json())
-    .then(data => setMessage(data.message));
-}, []);
 
 export default App;
