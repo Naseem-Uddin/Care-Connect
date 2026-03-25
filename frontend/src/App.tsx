@@ -1,4 +1,5 @@
 import React from 'react';
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 
 import Register from './pages/register';
@@ -22,5 +23,13 @@ function App() {
     </BrowserRouter>
   );
 }
+
+// frontend/src/App.tsx
+useEffect(() => {
+  // Vite sees '/api' and automatically forwards it to 'http://localhost:8000'
+  fetch('/api/v1/login') 
+    .then(res => res.json())
+    .then(data => setMessage(data.message));
+}, []);
 
 export default App;

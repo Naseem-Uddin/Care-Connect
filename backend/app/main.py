@@ -1,21 +1,23 @@
-#  Entry point for the backend application
-from fastapi import FastAPI, Request
-from fastapi.responses import RedirectResponse
+# backend/app/main.py
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from app.core.config import settings as config
 
-app = FastAPI()
+app = FastAPI(title=config.PROJECT_NAME)
 
-@app.exception_handler(404)
-async def custom_404_handler(request: Request, exc):
-    return RedirectResponse(url="/login")
+# Set up CORS
+if config.CORS_ORIGINS:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[str(origin) for origin in config.CORS_ORIGINS],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 @app.get("/")
-async def read_root():
-    return RedirectResponse(url="/login")
+async def root():
+    return {"status": "online", "message": f"Welcome to {config.PROJECT_NAME} API"}
 
-@app.get("/login")
-def login():
-    return {"message": "Welcome to the login page!"}
-
-@app.get("/signup")
-def signup():
-    return {"message": "Welcome to the signup page!"}
+# We will eventually include routers here:
+# app.include_router(api_router, prefix=settings.API_V1_STR)
